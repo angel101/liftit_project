@@ -18,4 +18,9 @@ urlpatterns = [
 	path('tipo_creation_view', views.tipo_creation_form, name = 'crear tipo'),
 	path('vehiculo_creation_view', views.vehiculo_creation_form, name = 'vehiculo tipo'),
 	path('vehiculo_asossiation_view', views.vehiculo_asossiation_form, name = 'vehiculo assossiation'),
+	path('reporte_vehiculos_marca_view', views.reporte_vehiculos_marca_view, name = 'vehiculo report'),
+	path('reporte_vehiculos_marca_rest', views.vehiculosPorMarca, name = 'vehiculosPorMarca'),
+	path('vehiculos_report', views.vehiculos_report, name = 'vehiculos_report'),
+	path('finder_view', views.finder_view, name = 'finder_view'),
+	path('finder_rest', views.finder_rest, name = 'finder_rest'),
 ]

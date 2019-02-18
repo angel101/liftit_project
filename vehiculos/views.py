@@ -277,3 +277,48 @@ def vehiculosPorMarca(request):
 		return Response({'message' : 'method not suported'},status=405)
 
 
+@api_view(['GET', 'POST'])
+def vehiculos_report(request):
+	if request.method == 'GET':
+		return Response({'message' : 'api list Tipo okey'},status = 200)
+	elif request.method == 'POST':
+		try:
+			listObjects = report_vehiculos_process()
+			
+			return Response({'message' : 'rest fine','data':listObjects},status = 200)
+		except Exception as e:
+			return Response({'message' : 'error inserting the object in db', 'error' : str(e)})
+	else:
+		return Response({'message' : 'method not suported'},status=405)
+
+
+
+def reporte_vehiculos_marca_view(request):
+	
+	return render(request, 'core/reporte_vehiculo_marca.html', {
+
+	})
+
+
+
+# FINDER REST ======================================================================================================
+
+def finder_view(request):
+	
+	return render(request, 'core/finder.html', {
+
+	})
+
+@api_view(['GET', 'POST'])
+def finder_rest(request):
+	if request.method == 'GET':
+		return Response({'message' : 'api list Tipo okey'},status = 200)
+	elif request.method == 'POST':
+		try:
+			listObjects = finder(request.data)
+			
+			return Response({'message' : 'rest fine','data':listObjects},status = 200)
+		except Exception as e:
+			return Response({'message' : 'error inserting the object in db', 'error' : str(e)})
+	else:
+		return Response({'message' : 'method not suported'},status=405)

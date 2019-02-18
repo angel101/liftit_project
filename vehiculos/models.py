@@ -32,7 +32,7 @@ class Autos (models.Model):
 		return self.placa
 
 class Auto_propietarios (models.Model):
-	auto = models.ForeignKey(Autos, on_delete = models.CASCADE)
+	auto = models.ForeignKey(Autos, on_delete = models.CASCADE,unique=True)
 	propietario = models.ForeignKey(Propietarios, on_delete = models.CASCADE)
 	active = models.BooleanField(default = True)
 

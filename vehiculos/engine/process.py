@@ -1,6 +1,9 @@
 from ..models import *
 
 
+from django.db.models import Q
+from django.db.models import Count
+
 # PROPIETATIOS METHODS ==================================================================
 
 def create_propietario_process(request):
@@ -32,7 +35,7 @@ def list_vehiculos_process():
 
 
 def report_vehiculos_process():
-	vehiculos = Autos.objects.all().values('placa, marcas__nombre')
+	vehiculos = Autos.objects.all().values('placa', 'marca__nombre','tipo__nombre').order_by('marca__nombre')
 	return list(vehiculos)
 
 # MARCA  METHODS ==================================================================
@@ -51,7 +54,7 @@ def list_marcas_process():
 
 
 def report_marcas_process():
-	autos = Autos.objects.all().values('marcas__nombre').annotate(total=Count('marcas__nombre')).order_by(total)
+	autos = Autos.objects.values('marca__nombre').annotate(count_marca=Count('marca')).order_by()
 	return list(autos)
 
 
@@ -68,3 +71,11 @@ def create_tipos_process(request):
 def list_tipos_process():
 	tipos = Tipos.objects.all().values()
 	return list(tipos)
+
+
+# FINDER METHODS =================================================================
+def finder(request):
+	query = request['query']
+
+	auto = Auto_propietarios.objects.values('auto__placa','auto__marca__nombre','auto__tipo__nombre').filter(Q(auto__placa__contains = query) | Q(auto__marca__nombre__contains = query) | Q(auto__tipo__nombre__contains = query) | Q(propietario__nombre__contains = query) | Q(propietario__cedula__contains = query))
+	return list(auto)

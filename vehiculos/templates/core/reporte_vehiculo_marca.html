@@ -1,0 +1,122 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+	<div class="right_col" role="main">
+		<div id="reporte_cantidad_por_marca">
+			<span class="badge badge-success">Reporte cantidad por marca</span>
+			<div>
+				<button class="btn btn-success" id="generate_marca">Generate</button>
+			</div>
+			
+			<div id="reporte">
+				<table id="records_table" class="center_col table table-dark" border='1'>
+					<tr>
+						<th>id</th>
+						<th>nombre</th>
+						<th>cantidad</th>
+					</tr>
+				</table>
+			</div>	
+
+		</div>
+
+		<div id="reporte_autos_por_marca">
+			<span class="badge badge-success">Reporte autos por marca</span>
+			<div>
+				<button class="btn btn-success" id="generate_vehiculo">Generate</button>
+			</div>
+			
+			<div id="reporte">
+				<table id="records_table_marca" class="center_col table table-dark" border='1'>
+					<tr>
+						<th>id</th>
+						<th>nombre</th>
+						<th>marca</th>
+						<th>tipo</th>
+					</tr>
+				</table>
+			</div>	
+
+		</div>
+
+		<div id="export">
+			<span class="badge badge-success">Generar csv</span>
+			<div>
+				<button class="btn btn-success" id="generate_csv">Generate</button>
+			</div>
+			
+		</div>
+		
+	</div>
+
+	<script type="text/javascript">
+		$('#generate_marca').click(()=>{
+			$.post({
+				url:'/reporte_vehiculos_marca_rest',
+				success:(response)=>{
+
+					$('#records_table tr').remove()
+					var trHTML = '';
+					$.each(response['data'], function (i, item) {
+
+						trHTML += '<tr><td>' + (i+1) + '</td><td>' + item.marca__nombre + '</td><td>' + item.count_marca + '</td></tr>';
+					});
+					$('#records_table').append(trHTML);
+					
+				},
+				error:(error,status,errorreal)=>{
+					console.log(errorreal);
+				}
+			});
+		});
+
+
+		$("#generate_vehiculo").click(()=>{
+			$.post({
+				url:'/vehiculos_report',
+				success:(response)=>{
+					$('#records_table_marca tr').remove()
+					var trHTML = '';
+					$.each(response['data'], function (i, item) {
+
+						trHTML += '<tr><td>' + (i+1) + '</td><td>' + item.placa + '</td><td>' + item.marca__nombre + '</td><td>'+ item.tipo__nombre +'</td></tr>';
+					});
+					$('#records_table_marca').append(trHTML);
+				}
+			})
+		});
+
+		$('#generate_csv').click(()=>{
+			$.post({
+				url:'/vehiculos_report',
+				success:(response)=>{
+					
+					let csvContent = "data:text/csv;charset=utf-8,";
+					let row = ['placa','marca','tipo'].join(",");
+					csvContent += row + "\r\n";
+
+					$.each(response['data'], (i,item)=>{
+						let row = item.placa+','+item.marca__nombre+','+item.tipo__nombre+''
+						csvContent += row + "\r\n";
+					});
+
+					var encodedUri = encodeURI(csvContent);
+					var link = document.createElement("a");
+					link.setAttribute("href", encodedUri);
+					link.setAttribute("download", "data.csv");
+					document.body.appendChild(link); // Required for FF
+
+					link.click(); // This will download the data file named "my_data.csv".
+				}
+			});
+		});
+	</script>
+{% endblock %}

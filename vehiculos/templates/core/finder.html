@@ -1,0 +1,47 @@
+{% extends "app/base_site.html" %}
+
+{% block title %} Dashboard 1 {% endblock title %}
+
+{% block stylesheets %}
+  {{ block.super }}
+{% endblock stylesheets %}
+
+{% block content %}
+	<div class="right_col" role="main">
+		<div>
+			<input type="text" class="form-control form-control-sm" id="text">
+			<button class="btn btn-success" id="find">find</button>
+		</div>
+		<div id="reporte">
+			<table id="records_table" class="center_col table table-dark" border='1'>
+				<tr>
+					<th>id</th>
+					<th>nombre</th>
+					<th>marca</th>
+					<th>tipo</th>
+				</tr>
+			</table>
+		</div>	
+	</div>
+
+	<script type="text/javascript">
+		$('#find').click(()=>{
+			let query = $('#text').val()
+			$.post({
+				url:'/finder_rest',
+				success:(response)=>{
+					$('#records_table tr').remove()
+					var trHTML = '';
+					$.each(response['data'], function (i, item) {
+
+						trHTML += '<tr><td>' + (i+1) + '</td><td>' + item.auto__placa + '</td><td>' + item.auto__marca__nombre + '</td><td>'+ item.auto__tipo__nombre +'</td></tr>';
+					});
+					$('#records_table').append(trHTML);
+
+					console.log(response)
+				},
+				data:{'query':query}
+			})
+		});
+	</script>
+{% endblock %}
